@@ -25,19 +25,6 @@ public class ClienteController {
             return ResponseEntity.ok(cliente);
 
     }
-/*
-   @PostMapping
-   @ResponseStatus(HttpStatus.BAD_REQUEST)
-   public ResponseEntity<Map<String, Object>> crearPrestamo(@RequestBody PrestamoDto prestamoDto) {
-      return ResponseEntity.ok(createLoanUseCase.execute(prestamoDto));
-   }
-
-    @GetMapping("/{idPrestamo}")
-    public ResponseEntity<Prestamo> buscarPrestamo(@PathVariable int idPrestamo) {
-        Prestamo prestamo = findLoanByIdUseCase.execute(idPrestamo);
-        return new ResponseEntity<>(prestamo, HttpStatus.OK);
-    }
-*/
 
 }
 
