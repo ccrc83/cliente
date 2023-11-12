@@ -1,0 +1,77 @@
+CREATE TABLE  "EMPLEADOS"
+   (	"ID_EMPLEADO" NUMBER,
+	"NOMBRE" VARCHAR2(100) COLLATE "USING_NLS_COMP",
+	 PRIMARY KEY ("ID_EMPLEADO")
+  USING INDEX  ENABLE
+   )  DEFAULT COLLATION "USING_NLS_COMP"
+/
+CREATE TABLE  "VENTAS"
+   (	"ID_VENTA" NUMBER,
+	"ID_EMPLEADO" NUMBER,
+	"DESCRIPCION_VENTA" VARCHAR2(200) COLLATE "USING_NLS_COMP",
+	"VALOR_VENTA" NUMBER,
+	 PRIMARY KEY ("ID_VENTA")
+  USING INDEX  ENABLE
+   )  DEFAULT COLLATION "USING_NLS_COMP"
+/
+-- Insertar registros en la tabla empleados
+INSERT INTO empleados (ID_Empleado, Nombre)
+VALUES (1, 'Juan Pérez');
+
+INSERT INTO empleados (ID_Empleado, Nombre)
+VALUES (2, 'María Rodriguez');
+
+-- Insertar registros en la tabla ventas
+INSERT INTO ventas (ID_Venta, ID_Empleado, Descripcion_Venta, Valor_Venta)
+VALUES (101, 1, 'Venta de producto A', 500.00);
+
+INSERT INTO ventas (ID_Venta, ID_Empleado, Descripcion_Venta, Valor_Venta)
+VALUES (102, 1, 'Venta de producto B', 700.00);
+
+INSERT INTO ventas (ID_Venta, ID_Empleado, Descripcion_Venta, Valor_Venta)
+VALUES (103, 2, 'Venta de producto C', 300.00);
+
+INSERT INTO ventas (ID_Venta, ID_Empleado, Descripcion_Venta, Valor_Venta)
+VALUES (104, 2, 'Venta de producto D', 450.00);
+
+INSERT INTO ventas (ID_Venta, ID_Empleado, Descripcion_Venta, Valor_Venta)
+VALUES (105, 1, 'Venta de producto E', 600.00);
+/
+ALTER TABLE  "VENTAS" ADD CONSTRAINT "FK_EMPLEADO" FOREIGN KEY ("ID_EMPLEADO")
+	  REFERENCES  "EMPLEADOS" ("ID_EMPLEADO") ENABLE
+/
+CREATE OR REPLACE EDITIONABLE SYNONYM  "DBMS_XPLAN" FOR "LIVESQL"."ORACLE_SQL_USER_XPLAN"
+/
+CREATE OR REPLACE EDITIONABLE SYNONYM  "V$SESSION" FOR "LIVESQL"."ORACLE_SQL_USER_V$SESSION"
+/
+CREATE OR REPLACE EDITIONABLE SYNONYM  "V$SQL_PLAN_STATISTICS_ALL" FOR "LIVESQL"."ORACLE_SQL_USER_V$SQL_PLAN_S_A"
+/
+CREATE OR REPLACE EDITIONABLE PACKAGE  "PACKAGE_1" as
+	 TYPE VentaRegistro IS RECORD (
+        ID_Venta NUMBER,
+        Monto_Venta NUMBER
+    );
+
+    TYPE VentaColeccion IS TABLE OF VentaRegistro;
+
+    FUNCTION obtener_ventas_empleado(p_id_empleado NUMBER) RETURN VentaColeccion;
+
+end PACKAGE_1;
+/
+CREATE OR REPLACE EDITIONABLE PACKAGE BODY  "PACKAGE_1" as
+   FUNCTION obtener_ventas_empleado(p_id_empleado NUMBER) RETURN VentaColeccion IS
+        v_ventas VentaColeccion := VentaColeccion();
+    BEGIN
+        FOR v_venta IN (SELECT ID_Venta, Valor_Venta
+                        FROM ventas
+                        WHERE ID_Empleado = p_id_empleado)
+        LOOP
+            v_ventas.EXTEND;
+            v_ventas(v_ventas.LAST).ID_Venta := v_venta.ID_Venta;
+            v_ventas(v_ventas.LAST).Monto_Venta := v_venta.Valor_Venta;
+        END LOOP;
+
+        RETURN v_ventas;
+    END obtener_ventas_empleado;
+end PACKAGE_1;
+/
