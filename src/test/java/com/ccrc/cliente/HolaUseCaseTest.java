@@ -13,6 +13,6 @@ public class HolaUseCaseTest {
     void testHolaUseCase_casoDeExito() {
         HolaUseCase holaUseCase = new HolaUseCase();
         Saludo saludar = holaUseCase.saludar();
-        assertEquals("Hola, equipo de desarrollo!", saludar);
+        assertEquals("Hola, equipo de desarrollo!", saludar.getMensaje());
     }
 }
