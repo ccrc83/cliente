@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.util.Map;
+
 @Controller
 public class FactorialController {
     @Autowired
@@ -16,7 +18,7 @@ public class FactorialController {
 
     @GetMapping("/factorial/{numero}")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Long> consultarCliente(@PathVariable int numero) {
+    public ResponseEntity<Map<String, Long>> consultarCliente(@PathVariable int numero) {
 
         return ResponseEntity.ok(factorialUseCase.factorial(numero));
     }
